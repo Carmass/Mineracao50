@@ -116,21 +116,24 @@ ALTER TABLE public.products ADD COLUMN search_vector TSVECTOR
 -- PRODUCT HISTORY (price & sales tracking)
 -- ============================================================
 CREATE TABLE public.product_history (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  product_id UUID NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+  id UUID NOT NULL DEFAULT uuid_generate_v4(),
+  product_id UUID NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
   original_price DECIMAL(10, 2),
   sales BIGINT,
   ranking INTEGER,
   score DECIMAL(5, 2),
-  captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (id, captured_at)
 ) PARTITION BY RANGE (captured_at);
 
--- Monthly partitions (create for 12 months)
-CREATE TABLE product_history_2024_01 PARTITION OF product_history
-  FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
-CREATE TABLE product_history_2024_06 PARTITION OF product_history
-  FOR VALUES FROM ('2024-06-01') TO ('2024-07-01');
+-- Monthly partitions
+CREATE TABLE product_history_2026_01 PARTITION OF product_history
+  FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
+CREATE TABLE product_history_2026_05 PARTITION OF product_history
+  FOR VALUES FROM ('2026-05-01') TO ('2026-06-01');
+CREATE TABLE product_history_2026_06 PARTITION OF product_history
+  FOR VALUES FROM ('2026-06-01') TO ('2026-07-01');
 CREATE TABLE product_history_default PARTITION OF product_history DEFAULT;
 
 -- ============================================================
