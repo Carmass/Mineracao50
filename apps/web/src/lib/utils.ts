@@ -58,14 +58,14 @@ export function slugify(text: string) {
     .trim();
 }
 
-export const MARKETPLACE_CONFIG: Record<Marketplace, { label: string; color: string; bgColor: string; logo: string }> = {
-  aliexpress: { label: "AliExpress", color: "#e52e2e", bgColor: "bg-red-500/10", logo: "🛒" },
-  shopee: { label: "Shopee", color: "#f97316", bgColor: "bg-orange-500/10", logo: "🛍️" },
-  amazon: { label: "Amazon", color: "#f59e0b", bgColor: "bg-yellow-500/10", logo: "📦" },
-  temu: { label: "Temu", color: "#8b5cf6", bgColor: "bg-purple-500/10", logo: "🏪" },
-  mercadolivre: { label: "Mercado Livre", color: "#facc15", bgColor: "bg-yellow-400/10", logo: "🛒" },
-  cj: { label: "CJ Dropshipping", color: "#06b6d4", bgColor: "bg-cyan-500/10", logo: "📫" },
-  alibaba: { label: "Alibaba", color: "#f97316", bgColor: "bg-orange-600/10", logo: "🏭" },
+export const MARKETPLACE_CONFIG: Record<Marketplace, { label: string; color: string; bgColor: string; emoji: string }> = {
+  aliexpress: { label: "AliExpress", color: "#e52e2e", bgColor: "bg-red-500/10", emoji: "🛒" },
+  shopee: { label: "Shopee", color: "#f97316", bgColor: "bg-orange-500/10", emoji: "🛍️" },
+  amazon: { label: "Amazon", color: "#f59e0b", bgColor: "bg-yellow-500/10", emoji: "📦" },
+  temu: { label: "Temu", color: "#8b5cf6", bgColor: "bg-purple-500/10", emoji: "🏪" },
+  mercadolivre: { label: "Mercado Livre", color: "#facc15", bgColor: "bg-yellow-400/10", emoji: "🛒" },
+  cj: { label: "CJ Dropshipping", color: "#06b6d4", bgColor: "bg-cyan-500/10", emoji: "📫" },
+  alibaba: { label: "Alibaba", color: "#f97316", bgColor: "bg-orange-600/10", emoji: "🏭" },
 };
 
 export function getOpportunityLabel(score: number): OpportunityScore["label"] {
