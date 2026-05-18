@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Tag, Clock, Fire, Percent, RefreshCw } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +20,18 @@ const PROMO_NAMES = { flash_sale: "Flash Sale", coupon: "Cupom", cashback: "Cash
 const PROMO_COLORS: Record<string, string> = { flash_sale: "text-red-400 bg-red-500/10", coupon: "text-blue-400 bg-blue-500/10", cashback: "text-green-400 bg-green-500/10", progressive_discount: "text-purple-400 bg-purple-500/10", seasonal: "text-yellow-400 bg-yellow-500/10" };
 
 function CountdownTimer({ endsAt }: { endsAt: string }) {
-  const [now, setNow] = useState(Date.now());
+  const [mounted, setMounted] = useState(false);
+  const [now, setNow] = useState(0);
+
+  useEffect(() => {
+    setNow(Date.now());
+    setMounted(true);
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!mounted) return <span className="font-mono text-xs text-red-300">--:--:--</span>;
+
   const diff = Math.max(0, new Date(endsAt).getTime() - now);
   const h = Math.floor(diff / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);

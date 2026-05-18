@@ -13,14 +13,18 @@ const MOCK_FLASH = [
 ];
 
 function Countdown({ seconds }: { seconds: number }) {
+  const [mounted, setMounted] = useState(false);
   const [remaining, setRemaining] = useState(seconds);
 
   useEffect(() => {
+    setMounted(true);
     const interval = setInterval(() => {
       setRemaining((r) => Math.max(0, r - 1));
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  if (!mounted) return <span className="font-mono text-xs text-red-400">--:--:--</span>;
 
   const h = Math.floor(remaining / 3600);
   const m = Math.floor((remaining % 3600) / 60);

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, Search, Moon, Sun, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,8 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   async function signOut() {
     const supabase = createClient();
@@ -47,7 +49,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
           className="w-9 h-9 text-white/50 hover:text-white hover:bg-white/5"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
-          {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          {mounted && (theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)}
         </Button>
 
         {/* Notifications */}
