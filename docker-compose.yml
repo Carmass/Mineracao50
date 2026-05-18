@@ -2,6 +2,21 @@ version: "3.9"
 
 services:
   # ============================================================
+  # FlareSolverr - bypass Cloudflare/anti-bot GRÁTIS
+  # ============================================================
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    ports:
+      - "8191:8191"
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # ============================================================
   # Frontend (Next.js)
   # ============================================================
   web:
