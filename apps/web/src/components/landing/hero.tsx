@@ -75,7 +75,7 @@ export function LandingHero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-black leading-[1.05] mb-6"
+          className="font-display text-5xl md:text-7xl font-extrabold leading-[1.08] tracking-tight mb-6"
         >
           Descubra{" "}
           <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
@@ -89,7 +89,7 @@ export function LandingHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg md:text-xl text-white/55 max-w-2xl mx-auto mb-10 leading-[1.8] font-light tracking-wide"
         >
           Mineração de produtos com IA em AliExpress, Shopee e Amazon.
           Encontre oportunidades de dropshipping, anúncios vencedores e tendências antes da concorrência.
