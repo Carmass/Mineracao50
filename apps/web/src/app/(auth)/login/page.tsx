@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/login-form";
 import { Zap } from "lucide-react";
 import Link from "next/link";
@@ -22,7 +23,9 @@ export default function LoginPage() {
           <span className="font-black text-xl neon-text">MineraçãoPro</span>
         </Link>
 
-        <LoginForm />
+        <Suspense fallback={<div className="h-96 animate-pulse bg-white/5 rounded-2xl" />}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
