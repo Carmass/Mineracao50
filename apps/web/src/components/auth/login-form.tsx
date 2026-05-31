@@ -36,13 +36,17 @@ export function LoginForm() {
   async function onSubmit(data: LoginData) {
     try {
       if (isRegister) {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
           options: { emailRedirectTo: `${window.location.origin}/dashboard` },
         });
         if (error) throw error;
-        toast.success("Conta criada! Verifique seu email.");
+        if (signUpData.session) {
+          router.push(searchParams.get("redirect") || "/dashboard");
+        } else {
+          toast.success("Conta criada! Verifique seu email para confirmar.");
+        }
         return;
       }
 

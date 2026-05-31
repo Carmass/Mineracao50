@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules
 .pnp
 .pnp.js
@@ -51,9 +51,21 @@ build/
 .pytest_cache/
 .mypy_cache/
 
+# Scraper tokens / credentials (NEVER commit)
+scrapers/.ali_token.json
+scrapers/.ml_token.json
+scrapers/.cookies/
+scrapers/*.session
+
 # Docker
 docker-compose.override.yml
 
 # Misc
 *.tsbuildinfo
 .vercel
+
+# Historico de conversas Claude Code
+conversas/
+
+# Python runtime (bundled interpreter, not scripts)
+apps/web/Python/

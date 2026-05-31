@@ -2,19 +2,61 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, ExternalLink, TrendingUp, Star } from "lucide-react";
+import { Heart, ExternalLink, TrendingUp, Star, Trash2 } from "lucide-react";
 import { cn, formatCurrency, formatNumber, MARKETPLACE_CONFIG, getOpportunityLabel, getOpportunityColor } from "@/lib/utils";
 import type { Product } from "@/types";
-import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { favoritesApi, productsApi } from "@/lib/api";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
   compact?: boolean;
+  onDelete?: (id: string) => void;
 }
 
-export function ProductCard({ product, compact = false }: ProductCardProps) {
+export function ProductCard({ product, compact = false, onDelete }: ProductCardProps) {
   const [isFavorited, setIsFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [imgSrc, setImgSrc] = useState(
+    product.thumbnail || product.images[0] || "https://placehold.co/400x400/1a1a2e/ffffff?text=Produto"
+  );
+
+  const handleDelete = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (deleting) return;
+    setDeleting(true);
+    try {
+      await productsApi.delete(product.id);
+      toast.success("Produto removido");
+      onDelete?.(product.id);
+    } catch {
+      toast.error("Erro ao remover produto");
+      setDeleting(false);
+    }
+  }, [deleting, product.id, onDelete]);
+
+  const handleFavorite = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (favLoading) return;
+    setFavLoading(true);
+    try {
+      if (isFavorited) {
+        await favoritesApi.remove(product.id);
+        setIsFavorited(false);
+        toast.success("Removido dos favoritos");
+      } else {
+        await favoritesApi.add(product.id);
+        setIsFavorited(true);
+        toast.success("Salvo nos favoritos!");
+      }
+    } catch {
+      toast.error("Faça login para salvar favoritos");
+    } finally {
+      setFavLoading(false);
+    }
+  }, [isFavorited, favLoading, product.id]);
   const marketplace = MARKETPLACE_CONFIG[product.marketplace];
   const scoreLabel = getOpportunityLabel(product.score);
   const scoreColor = getOpportunityColor(scoreLabel);
@@ -35,11 +77,13 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
       {/* Image */}
       <div className="relative aspect-square bg-white/5 overflow-hidden">
         <Image
-          src={product.thumbnail || product.images[0] || "https://placehold.co/400x400"}
+          src={imgSrc}
           alt={product.title}
           fill
+          unoptimized
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          onError={() => setImgSrc("https://placehold.co/400x400/1a1a2e/ffffff?text=Produto")}
         />
 
         {/* Badges overlay */}
@@ -61,16 +105,25 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
           </div>
         )}
 
-        {/* Favorite button */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setIsFavorited(!isFavorited);
-          }}
-          className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <Heart className={cn("w-4 h-4 transition-colors", isFavorited ? "fill-red-400 text-red-400" : "text-white")} />
-        </button>
+        {/* Action buttons */}
+        <div className="absolute bottom-2 right-2 flex gap-1">
+          {onDelete && (
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 hover:bg-red-600/80"
+            >
+              <Trash2 className="w-4 h-4 text-white" />
+            </button>
+          )}
+          <button
+            onClick={handleFavorite}
+            disabled={favLoading}
+            className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50"
+          >
+            <Heart className={cn("w-4 h-4 transition-colors", isFavorited ? "fill-red-400 text-red-400" : "text-white")} />
+          </button>
+        </div>
       </div>
 
       {/* Content */}

@@ -2,12 +2,13 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Bell, Plus, Trash2, Toggle, Zap, TrendingUp, Tag, ArrowDownRight } from "lucide-react";
+import { Bell, Plus, Trash2, Zap, TrendingUp, Tag, ArrowDownRight } from "lucide-react";
 import { alertsApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import type { Alert, AlertType } from "@/types";
 import { toast } from "sonner";
 import { formatRelativeTime } from "@/lib/utils";
+import { AlertCreateModal } from "@/components/alerts/alert-create-modal";
 
 const ALERT_ICONS: Record<AlertType, { icon: typeof Zap; color: string }> = {
   product_viral: { icon: Zap, color: "text-yellow-400" },
@@ -27,16 +28,12 @@ const ALERT_LABELS: Record<AlertType, string> = {
   promotion_started: "Promoção Iniciada",
 };
 
-const MOCK_ALERTS: Alert[] = [
-  { id: "1", user_id: "u1", type: "product_viral", conditions: { min_score: 85 }, channels: ["email", "telegram"], active: true, trigger_count: 12, created_at: new Date(Date.now() - 1000*60*60*24*3).toISOString() },
-  { id: "2", user_id: "u1", type: "price_drop", conditions: { price_drop_percentage: 30 }, channels: ["email"], active: true, trigger_count: 5, created_at: new Date(Date.now() - 1000*60*60*24*7).toISOString() },
-  { id: "3", user_id: "u1", type: "promotion_started", conditions: { marketplace: "aliexpress" }, channels: ["push", "telegram"], active: false, trigger_count: 3, created_at: new Date(Date.now() - 1000*60*60*24*14).toISOString() },
-];
-
 export function AlertsPage() {
   const queryClient = useQueryClient();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [quickType, setQuickType] = useState<AlertType | undefined>();
 
-  const { data: alerts = MOCK_ALERTS } = useQuery({
+  const { data: alerts = [] } = useQuery({
     queryKey: ["alerts"],
     queryFn: alertsApi.list,
   });
@@ -55,6 +52,11 @@ export function AlertsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["alerts"] }),
   });
 
+  const openWithType = (type: AlertType) => {
+    setQuickType(type);
+    setModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -65,13 +67,17 @@ export function AlertsPage() {
           </h1>
           <p className="text-sm text-white/50 mt-1">{(alerts as Alert[]).filter(a => a.active).length} alertas ativos</p>
         </div>
-        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 border-0">
+        <Button
+          size="sm"
+          className="bg-blue-600 hover:bg-blue-700 border-0"
+          onClick={() => { setQuickType(undefined); setModalOpen(true); }}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Novo Alerta
         </Button>
       </div>
 
-      {/* Alert type cards (quick create) */}
+      {/* Alert type quick-create cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {Object.entries(ALERT_LABELS).map(([type, label]) => {
           const config = ALERT_ICONS[type as AlertType];
@@ -79,6 +85,7 @@ export function AlertsPage() {
           return (
             <button
               key={type}
+              onClick={() => openWithType(type as AlertType)}
               className="glass-card p-3 text-center hover:border-white/20 transition-colors group"
             >
               <Icon className={`w-5 h-5 mx-auto mb-2 ${config.color} group-hover:scale-110 transition-transform`} />
@@ -90,6 +97,13 @@ export function AlertsPage() {
 
       {/* Active alerts list */}
       <div className="space-y-3">
+        {(alerts as Alert[]).length === 0 && (
+          <div className="glass-card p-8 text-center">
+            <Bell className="w-10 h-10 text-white/20 mx-auto mb-3" />
+            <p className="text-white/50 text-sm">Nenhum alerta configurado.</p>
+            <p className="text-white/30 text-xs mt-1">Clique em "Novo Alerta" ou escolha um tipo acima para começar.</p>
+          </div>
+        )}
         {(alerts as Alert[]).map((alert, i) => {
           const config = ALERT_ICONS[alert.type];
           const Icon = config.icon;
@@ -101,7 +115,7 @@ export function AlertsPage() {
               transition={{ delay: i * 0.06 }}
               className={`glass-card p-4 flex items-center gap-4 ${!alert.active ? "opacity-50" : ""}`}
             >
-              <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0`}>
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
                 <Icon className={`w-5 h-5 ${config.color}`} />
               </div>
 
@@ -112,13 +126,14 @@ export function AlertsPage() {
                     {alert.active ? "Ativo" : "Inativo"}
                   </span>
                 </div>
-
                 <div className="flex items-center gap-4 text-xs text-white/40">
                   <span>Canais: {alert.channels.join(", ")}</span>
                   {alert.last_triggered_at && (
-                    <span>Último disparo: {formatRelativeTime(alert.last_triggered_at)}</span>
+                    <span>Último: {formatRelativeTime(alert.last_triggered_at)}</span>
                   )}
-                  <span>{alert.trigger_count} disparos</span>
+                  {(alert.trigger_count ?? 0) > 0 && (
+                    <span>{alert.trigger_count} disparos</span>
+                  )}
                 </div>
               </div>
 
@@ -127,7 +142,7 @@ export function AlertsPage() {
                   onClick={() => toggleMutation.mutate({ id: alert.id, active: !alert.active })}
                   className={`w-10 h-6 rounded-full transition-colors relative ${alert.active ? "bg-blue-600" : "bg-white/20"}`}
                 >
-                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${alert.active ? "left-4.5" : "left-0.5"}`} />
+                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all ${alert.active ? "left-[18px]" : "left-0.5"}`} />
                 </button>
                 <button
                   onClick={() => deleteMutation.mutate(alert.id)}
@@ -140,6 +155,12 @@ export function AlertsPage() {
           );
         })}
       </div>
+
+      <AlertCreateModal
+        open={modalOpen}
+        initialType={quickType}
+        onClose={() => setModalOpen(false)}
+      />
     </div>
   );
 }

@@ -129,6 +129,7 @@ export interface Trend {
   marketplace?: Marketplace;
   data_points: TrendDataPoint[];
   created_at: string;
+  updated_at?: string;
 }
 
 export interface TrendDataPoint {

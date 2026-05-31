@@ -35,6 +35,10 @@ export async function GET(request: NextRequest) {
   const minRating = searchParams.get("min_rating");
   if (minRating) query = query.gte("rating", parseFloat(minRating));
 
+  // Category filter
+  const category = searchParams.getAll("category");
+  if (category.length > 0) query = query.in("category", category);
+
   // Text search
   const q = searchParams.get("query");
   if (q) query = query.textSearch("search_vector", q, { type: "websearch" });

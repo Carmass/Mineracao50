@@ -5,17 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { dashboardApi } from "@/lib/api";
 import { formatNumber, formatPercent } from "@/lib/utils";
 
-const MOCK_KPIS = {
-  total_products: 10432187,
-  products_today: 48921,
-  viral_products: 234,
-  active_promotions: 1892,
-  avg_opportunity_score: 71.4,
-  top_marketplace: "aliexpress" as const,
-  trending_categories: ["Eletrônicos", "Wearables", "Casa"],
-  price_drops_today: 3421,
-};
-
 const kpiConfig = [
   {
     key: "total_products",
@@ -56,7 +45,7 @@ const kpiConfig = [
 ];
 
 export function DashboardKPICards() {
-  const { data: kpis = MOCK_KPIS } = useQuery({
+  const { data: kpis = {} as Record<string, number> } = useQuery({
     queryKey: ["dashboard", "kpis"],
     queryFn: dashboardApi.kpis,
     staleTime: 5 * 60 * 1000,

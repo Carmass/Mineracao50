@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
+import path from "path";
+
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3004";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  experimental: {
+    // Required for monorepo: traces root node_modules into the standalone bundle
+    outputFileTracingRoot: path.join(process.cwd(), "../../"),
+  },
   devIndicators: false,
   images: {
     remotePatterns: [
@@ -8,12 +16,21 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.alicdn.com" },
       { protocol: "https", hostname: "**.shopee.com.br" },
       { protocol: "https", hostname: "**.shopeecdn.com" },
+      { protocol: "https", hostname: "**.susercontent.com" },
+      { protocol: "https", hostname: "down-br.img.susercontent.com" },
       { protocol: "https", hostname: "m.media-amazon.com" },
       { protocol: "https", hostname: "images-na.ssl-images-amazon.com" },
       { protocol: "https", hostname: "**.supabase.co" },
       { protocol: "https", hostname: "placehold.co" },
       { protocol: "https", hostname: "picsum.photos" },
+      { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.cloudinary.com" },
+      { protocol: "https", hostname: "fakestoreapi.com" },
+      { protocol: "https", hostname: "cf.shopee.com.br" },
+      { protocol: "https", hostname: "**.mlstatic.com" },
+      { protocol: "https", hostname: "http2.mlstatic.com" },
+      { protocol: "https", hostname: "**.aliexpress-media.com" },
+      { protocol: "https", hostname: "ae-pic-a1.aliexpress-media.com" },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
@@ -35,7 +52,7 @@ const nextConfig: NextConfig = {
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: blob: https:",
             "font-src 'self'",
-            "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://api.stripe.com",
+            `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://projetosai-supabase.cbunsn.easypanel.host wss://projetosai-supabase.cbunsn.easypanel.host ${appUrl} https://api.openai.com https://api.stripe.com`,
             "frame-src https://js.stripe.com",
           ].join("; "),
         },

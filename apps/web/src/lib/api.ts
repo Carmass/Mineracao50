@@ -31,6 +31,9 @@ export const productsApi = {
 
   history: (id: string) =>
     api.get(`/api/products/${id}/history`).then((r) => r.data),
+
+  delete: (id: string) =>
+    api.delete(`/api/products/${id}`).then((r) => r.data),
 };
 
 // ---- Dashboard ----

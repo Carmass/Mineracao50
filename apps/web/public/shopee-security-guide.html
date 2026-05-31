@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatórios e Certificações de Segurança — Shopee Open Platform</title>
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Variáveis ── */
+    :root {
+      --shopee:   #ee4d2d;
+      --shopee-dk:#c73d22;
+      --blue:     #1a56db;
+      --gray-50:  #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --warn:     #92400e;
+      --warn-bg:  #fffbeb;
+      --warn-bdr: #fcd34d;
+      --info:     #1e3a5f;
+      --info-bg:  #eff6ff;
+      --info-bdr: #93c5fd;
+      --ok:       #14532d;
+      --ok-bg:    #f0fdf4;
+      --ok-bdr:   #86efac;
+    }
+
+    /* ── Base ── */
+    html { font-size: 14px; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--gray-800);
+      background: #fff;
+      line-height: 1.65;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 48px 60px;
+    }
+
+    /* ── Cabeçalho ── */
+    .doc-header {
+      border-bottom: 3px solid var(--shopee);
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: var(--shopee);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+    .brand-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--shopee);
+      letter-spacing: 0.01em;
+    }
+    .doc-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--gray-800);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+    .doc-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .badge-lang  { background: #e0e7ff; color: #3730a3; }
+    .badge-date  { background: var(--gray-100); color: var(--gray-600); }
+
+    /* ── Sumário ── */
+    .toc {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 40px;
+    }
+    .toc-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      padding-left: 20px;
+      line-height: 2;
+    }
+    .toc a {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ── Seções ── */
+    section { margin-bottom: 44px; }
+    section:last-of-type { margin-bottom: 0; }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--shopee);
+      border-left: 4px solid var(--shopee);
+      padding-left: 12px;
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin: 20px 0 10px;
+    }
+    p { margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Listas ── */
+    ul, ol { padding-left: 22px; margin-bottom: 12px; }
+    ul li, ol li { margin-bottom: 5px; }
+    ol.steps { list-style: none; padding-left: 0; counter-reset: step; }
+    ol.steps li {
+      counter-increment: step;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 10px 14px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    ol.steps li::before {
+      content: counter(step);
+      min-width: 26px;
+      height: 26px;
+      background: var(--shopee);
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    ol.steps li .step-content { flex: 1; }
+    ol.steps li .step-note {
+      font-size: 12px;
+      color: var(--gray-600);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    /* ── Alertas ── */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .alert-warn  { background: var(--warn-bg); border: 1px solid var(--warn-bdr); color: var(--warn); }
+    .alert-info  { background: var(--info-bg); border: 1px solid var(--info-bdr); color: var(--info); }
+    .alert-ok    { background: var(--ok-bg);   border: 1px solid var(--ok-bdr);   color: var(--ok); }
+
+    /* ── Tabela de requisitos ── */
+    .req-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .req-card {
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 16px;
+      background: var(--gray-50);
+    }
+    .req-card-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--shopee);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .req-card-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: var(--gray-800);
+    }
+    .req-card p {
+      font-size: 12px;
+      color: var(--gray-600);
+      margin-bottom: 4px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .tag-required  { background: #fee2e2; color: #991b1b; }
+    .tag-isv       { background: #fef3c7; color: #92400e; }
+    .tag-all       { background: #dbeafe; color: #1e40af; }
+
+    /* ── Providers ── */
+    .providers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .provider-card {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      background: #fff;
+    }
+    .provider-card .name { font-weight: 700; color: var(--gray-800); }
+    .provider-card .sub  { font-size: 11px; color: var(--gray-600); }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 13px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--gray-200);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      background: var(--info-bg);
+      border: 1px solid var(--info-bdr);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .timeline-days {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--blue);
+      line-height: 1;
+    }
+    .timeline-label { font-size: 13px; color: var(--info); }
+    .timeline-label strong { display: block; font-size: 14px; }
+
+    /* ── Validade ── */
+    .validity-strip {
+      background: linear-gradient(135deg, #fff7ed, #fef3c7);
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .validity-years {
+      font-size: 40px;
+      font-weight: 900;
+      color: #b45309;
+      line-height: 1;
+    }
+    .validity-label { font-size: 13px; color: #78350f; }
+    .validity-label strong { display: block; font-size: 14px; }
+
+    /* ── Rodapé ── */
+    .doc-footer {
+      margin-top: 52px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+    .doc-footer a { color: var(--gray-400); }
+
+    /* ── Divisor ── */
+    hr { border: none; border-top: 1px solid var(--gray-200); margin: 36px 0; }
+
+    /* ── Print ── */
+    @media print {
+      body { padding: 20px 28px 40px; font-size: 12px; max-width: 100%; }
+      .no-print { display: none !important; }
+      h2 { font-size: 15px; }
+      h3 { font-size: 13px; }
+      .doc-title { font-size: 20px; }
+      section { page-break-inside: avoid; }
+      a { color: inherit; text-decoration: none; }
+      .toc { display: none; }
+      ol.steps li { background: #fff; }
+    }
+
+    /* ── Print button (tela) ── */
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--shopee);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(238,77,45,0.35);
+      z-index: 999;
+    }
+    .print-btn:hover { background: var(--shopee-dk); }
+    @media print { .print-btn { display: none; } }
+  </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">⬇ Salvar como PDF</button>
+
+<!-- ══════════════════════════════════════════════
+     CABEÇALHO
+══════════════════════════════════════════════ -->
+<header class="doc-header">
+  <div class="brand">
+    <div class="brand-logo">S</div>
+    <span class="brand-name">Shopee Open Platform</span>
+  </div>
+  <h1 class="doc-title">Informações sobre Relatórios<br>e Certificações de Segurança</h1>
+  <div class="doc-meta">
+    <span><span class="badge badge-date">Última atualização: 28/12/2025</span></span>
+    <span><span class="badge badge-lang">EN / 简体中文 / ไทย</span></span>
+    <span>Fonte: open.shopee.com/developer-guide/718</span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     SUMÁRIO
+══════════════════════════════════════════════ -->
+<nav class="toc no-print">
+  <div class="toc-title">Índice</div>
+  <ol>
+    <li><a href="#visao-geral">1. Visão Geral</a></li>
+    <li><a href="#requisitos">2. Requisitos de Elegibilidade</a></li>
+    <li><a href="#submit-pentest">3. Como Enviar o Relatório de Teste de Penetração</a></li>
+    <li><a href="#timeline">4. Prazo de Análise</a></li>
+    <li><a href="#ip-whitelist">5. Como Habilitar o IP Whitelist</a></li>
+    <li><a href="#boas-praticas">6. Boas Práticas para Envio do Relatório</a></li>
+    <li><a href="#checklist">7. Checklist de Conformidade</a></li>
+  </ol>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     1. VISÃO GERAL
+══════════════════════════════════════════════ -->
+<section id="visao-geral">
+  <h2>1. Visão Geral</h2>
+  <p>
+    A <strong>Shopee Open Platform</strong> protege os dados empresariais dos vendedores e os dados pessoais dos usuários considerados sensíveis — incluindo <strong>nome do cliente, número de telefone, endereço de e-mail e endereço</strong>.
+  </p>
+  <p>
+    Por padrão, os dados sensíveis são <strong>mascarados</strong>. Para ter acesso aos dados sem máscara, os desenvolvedores precisam cumprir requisitos específicos de segurança.
+  </p>
+  <div class="alert alert-info">
+    <span class="alert-icon">ℹ️</span>
+    <div>
+      Este documento descreve os dois requisitos obrigatórios para solicitar acesso a dados sensíveis: o <strong>Relatório de Teste de Penetração</strong> (para ISVs que atendem vendedores na Tailândia) e o <strong>IP Whitelist</strong> (obrigatório para todos os desenvolvedores).
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     2. REQUISITOS DE ELEGIBILIDADE
+══════════════════════════════════════════════ -->
+<section id="requisitos">
+  <h2>2. Requisitos de Elegibilidade</h2>
+  <p>Para solicitar acesso a dados sensíveis de negócios, os desenvolvedores devem atender às seguintes condições:</p>
+
+  <div class="req-grid">
+    <!-- Requisito 1 -->
+    <div class="req-card">
+      <div class="req-card-num">01</div>
+      <div class="req-card-title">Relatório de Teste de Penetração</div>
+      <div><span class="tag tag-isv">ISV — Tailândia apenas</span></div>
+      <p>Exigido para desenvolvedores de Plataformas Parceiras de Terceiros (ISV) que atendem ou planejam atender vendedores na <strong>Tailândia</strong>.</p>
+      <p>Um relatório de teste de penetração válido deve ser enviado através do Console da Open Platform.</p>
+    </div>
+
+    <!-- Requisito 2 -->
+    <div class="req-card">
+      <div class="req-card-num">02</div>
+      <div class="req-card-title">IP Address Whitelist</div>
+      <div><span class="tag tag-all">Todos os desenvolvedores</span></div>
+      <p>Os endereços IP dos servidores que hospedam sua aplicação devem ser <strong>declarados e incluídos na whitelist</strong>.</p>
+      <p>Obrigatório para todos os desenvolvedores, independente da região ou tipo de conta.</p>
+    </div>
+  </div>
+
+  <div class="validity-strip">
+    <div class="validity-years">2</div>
+    <div class="validity-label">
+      <strong>anos de validade do acesso</strong>
+      Para desenvolvedores ISV aprovados, o acesso a dados sensíveis é válido por <strong>dois (2) anos</strong> a partir da data de emissão do relatório de teste de penetração.
+    </div>
+  </div>
+
+  <div class="alert alert-warn">
+    <span class="alert-icon">⚠️</span>
+    <div>
+      <strong>Atenção (ISVs):</strong> O acesso aprovado a dados sensíveis é válido por dois (2) anos a partir da data de emissão do relatório de teste de penetração. Após esse período, é necessário submeter um novo relatório para renovar o acesso.
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     3. ENVIO DO RELATÓRIO DE PENTEST
+══════════════════════════════════════════════ -->
+<section id="submit-pentest">
+  <h2>3. Como Enviar o Relatório de Teste de Penetração</h2>
+  <p>Siga os passos abaixo para fazer o upload do relatório:</p>
+
+  <ol class="steps">
+    <li>
+      <div class="step-content">
+        <strong>Acesse o Console da Open Platform</strong> com sua conta de desenvolvedor.
+        <div class="step-note">Contas de membro não têm permissão para fazer upload de relatórios.</div>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Navegue até Central Pessoal → Informações da Conta</strong>
+        <div class="step-note">
+          ISVs da China Continental: acesse pelo link específico para CN.<br>
+          ISVs de outras regiões: acesse pelo link de outras regiões.
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Em <strong>Informações de Relatórios e Certificações de Segurança</strong>, clique em <strong>"Adicionar"</strong>.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Em <strong>Tipo de Relatório e Certificação de Segurança</strong>, selecione <strong>"Relatório de Teste de Penetração"</strong>.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Faça upload</strong> do seu relatório de teste de penetração mais recente.
+        <div class="step-note">
+          Formatos aceitos: PDF, JPG, JPEG, PNG (máx. 10 MB).<br>
+          Para relatórios com mais de uma página, envie em formato PDF.<br>
+          A certificação de segurança pode ser ISO 27001, SOC 2, PCI DSS ou outra equivalente.
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Clique em <strong>"Salvar"</strong> para concluir o envio.
+      </div>
+    </li>
+  </ol>
+
+  <div class="alert alert-info">
+    <span class="alert-icon">📌</span>
+    <div>
+      O status do envio (<strong>Aprovado / Rejeitado</strong>) será atualizado na seção Informações da Conta. Consulte a seção de Boas Práticas ao final deste documento antes de preparar seu relatório.
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     4. PRAZO DE ANÁLISE
+══════════════════════════════════════════════ -->
+<section id="timeline">
+  <h2>4. Prazo de Análise</h2>
+  <p>Após o envio, o resultado da análise ficará disponível dentro do prazo indicado abaixo:</p>
+
+  <div class="timeline">
+    <div class="timeline-days">10</div>
+    <div class="timeline-label">
+      <strong>dias úteis</strong>
+      O resultado da análise (Aprovado / Rejeitado) é geralmente disponibilizado em até 10 dias úteis. O status será atualizado na seção <em>Informações da Conta</em> do Console.
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     5. IP ADDRESS WHITELIST
+══════════════════════════════════════════════ -->
+<section id="ip-whitelist">
+  <h2>5. Como Habilitar o IP Address Whitelist</h2>
+  <p>Para habilitar o IP whitelist na sua aplicação:</p>
+
+  <ol class="steps">
+    <li>
+      <div class="step-content">
+        Faça login no <strong>Console da Open Platform</strong> e acesse <strong>Lista de Apps</strong>.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Selecione o app</strong> que requer acesso a dados sensíveis.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Clique em <strong>"Go Live"</strong> e preencha as informações solicitadas.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Em <strong>"IP Address Whitelist"</strong>, insira o(s) endereço(s) IP do(s) servidor(es) que hospedam sua aplicação.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Ative o botão <strong>"Enable IP Address Whitelist"</strong> para <strong>ON</strong>.
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        Clique em <strong>"Submit"</strong> para salvar as configurações.
+      </div>
+    </li>
+  </ol>
+
+  <div class="alert alert-warn">
+    <span class="alert-icon">⚠️</span>
+    <div>
+      <strong>Importante:</strong> Uma vez que o IP Whitelist esteja habilitado, as chamadas de API <strong>só poderão ser feitas a partir de aplicações hospedadas no(s) endereço(s) IP declarado(s)</strong>. Qualquer IP não listado será bloqueado.
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     6. BOAS PRÁTICAS
+══════════════════════════════════════════════ -->
+<section id="boas-praticas">
+  <h2>6. Boas Práticas para Envio do Relatório de Pentest</h2>
+
+  <!-- 6.1 Provedores recomendados -->
+  <h3>6.1 Provedores de Teste Recomendados</h3>
+  <p>
+    Para melhorar a qualidade do relatório e a eficiência da análise, os ISVs são incentivados a contratar testadores de penetração credenciados e respeitáveis.
+  </p>
+
+  <div class="alert alert-ok">
+    <span class="alert-icon">✅</span>
+    <div>
+      <strong>Para todos os ISVs:</strong> Utilize testadores de penetração credenciados pelo <strong>CREST</strong>.
+    </div>
+  </div>
+
+  <p><strong>Para ISVs com sede na China (CN):</strong> Recomendamos testadores credenciados por:</p>
+
+  <div class="providers-grid">
+    <div class="provider-card">
+      <div class="name">奇安信 — Qianxin</div>
+      <div class="sub">Empresa de segurança cibernética, China</div>
+    </div>
+    <div class="provider-card">
+      <div class="name">360 Security</div>
+      <div class="sub">Empresa de segurança digital, China</div>
+    </div>
+    <div class="provider-card">
+      <div class="name">深信服 — Sangfor</div>
+      <div class="sub">Segurança de redes e nuvem, China</div>
+    </div>
+    <div class="provider-card">
+      <div class="name">长亭科技 — Chaitin</div>
+      <div class="sub">Segurança cibernética, China</div>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <span class="alert-icon">ℹ️</span>
+    <div>
+      Relatórios de outros testadores de penetração ainda serão analisados e considerados para aprovação <strong>caso a caso</strong>.
+    </div>
+  </div>
+
+  <!-- 6.2 Qualidade do relatório -->
+  <h3>6.2 Requisitos de Qualidade do Relatório</h3>
+  <p>Um Relatório de Teste de Penetração completo deve:</p>
+
+  <ul class="checklist">
+    <li>
+      <div class="check-icon"></div>
+      <span>Refletir a <strong>exposição externa</strong> da aplicação (superfície de ataque acessível pela internet)</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Avaliar vulnerabilidades em <strong>todos os sistemas ou aplicações relevantes</strong></span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Incluir uma <strong>lista completa de descobertas</strong> (findings), incluindo vulnerabilidades de todos os níveis de severidade</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Confirmar que <strong>nenhum problema crítico ou de alto risco permanece sem solução</strong></span>
+    </li>
+  </ul>
+
+  <!-- 6.3 Data de emissão recomendada -->
+  <h3>6.3 Data de Emissão Recomendada</h3>
+
+  <div class="validity-strip">
+    <div class="validity-years">1</div>
+    <div class="validity-label">
+      <strong>ano — janela recomendada de emissão</strong>
+      Os ISVs são incentivados a enviar um relatório de teste de penetração emitido dentro do <strong>último um (1) ano</strong>.
+    </div>
+  </div>
+
+  <p>
+    O acesso a dados sensíveis será concedido por <strong>dois (2) anos</strong> a partir da data de emissão do relatório.
+  </p>
+</section>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     7. CHECKLIST
+══════════════════════════════════════════════ -->
+<section id="checklist">
+  <h2>7. Checklist de Conformidade</h2>
+  <p>Use este checklist antes de submeter sua solicitação de acesso a dados sensíveis:</p>
+
+  <ul class="checklist">
+    <li>
+      <div class="check-icon"></div>
+      <span>Conta de <strong>desenvolvedor</strong> (não de membro) ativa no Console da Open Platform</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Relatório de teste de penetração emitido há <strong>menos de 1 ano</strong> (ISVs — Tailândia)</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Relatório emitido por testador <strong>credenciado pelo CREST</strong> ou equivalente aprovado</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Relatório em formato <strong>PDF</strong> (se possuir mais de uma página), máximo <strong>10 MB</strong></span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Nenhuma vulnerabilidade <strong>crítica ou alta</strong> sem resolução documentada no relatório</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Endereços IP do(s) servidor(es) da aplicação <strong>identificados e disponíveis</strong></span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>IP Whitelist <strong>habilitado (ON)</strong> no painel do app no Console</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Prazo de revisão considerado: <strong>até 10 dias úteis</strong> após envio</span>
+    </li>
+    <li>
+      <div class="check-icon"></div>
+      <span>Renovação agendada antes da <strong>expiração dos 2 anos</strong> de validade</span>
+    </li>
+  </ul>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     RODAPÉ
+══════════════════════════════════════════════ -->
+<footer class="doc-footer">
+  <div>
+    <div>Shopee Open Platform — Developer Guide</div>
+    <div><a href="https://open.shopee.com/developer-guide/718">open.shopee.com/developer-guide/718</a></div>
+  </div>
+  <div style="text-align: right;">
+    <div>Copyright © Shopee 2025</div>
+    <div>Documento gerado em 31/05/2026</div>
+  </div>
+</footer>
+
+</body>
+</html>

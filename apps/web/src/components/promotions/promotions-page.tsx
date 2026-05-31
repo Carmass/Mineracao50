@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Tag, Clock, Fire, Percent, RefreshCw } from "lucide-react";
+import { Tag, Clock, Flame, Percent, RefreshCw } from "lucide-react";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { promotionsApi } from "@/lib/api";
 import { formatCurrency, formatNumber, MARKETPLACE_CONFIG } from "@/lib/utils";
@@ -46,13 +47,22 @@ function CountdownTimer({ endsAt }: { endsAt: string }) {
 export function PromotionsPage() {
   const [filter, setFilter] = useState<string>("all");
 
-  const { data: promotions = MOCK_PROMOTIONS, refetch } = useQuery({
+  const { data: promoResponse, refetch } = useQuery({
     queryKey: ["promotions"],
     queryFn: () => promotionsApi.list(),
     refetchInterval: 60000,
   });
 
-  const filtered = (promotions as Promotion[]).filter(
+  // API returns PaginatedResponse<Promotion>; fall back to mock when empty
+  const promotions: Promotion[] = (() => {
+    if (!promoResponse) return MOCK_PROMOTIONS;
+    const list = Array.isArray(promoResponse)
+      ? promoResponse
+      : (promoResponse as any)?.data;
+    return Array.isArray(list) && list.length > 0 ? list : MOCK_PROMOTIONS;
+  })();
+
+  const filtered = promotions.filter(
     (p) => filter === "all" || p.type === filter
   );
 
@@ -104,6 +114,23 @@ export function PromotionsPage() {
             transition={{ delay: i * 0.05 }}
             className="glass-card p-5 relative overflow-hidden"
           >
+            {/* Product info */}
+            {promo.product && (
+              <div className="flex items-center gap-3 mb-4 pr-12">
+                {promo.product.thumbnail && (
+                  <Image
+                    src={promo.product.thumbnail}
+                    alt={promo.product.title}
+                    width={48}
+                    height={48}
+                    className="rounded-lg object-cover flex-shrink-0 bg-white/5"
+                    unoptimized
+                  />
+                )}
+                <p className="text-sm text-white font-medium line-clamp-2 leading-snug">{promo.product.title}</p>
+              </div>
+            )}
+
             {/* Type badge */}
             <div className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full mb-3 ${PROMO_COLORS[promo.type] || "text-white/60 bg-white/10"}`}>
               <Percent className="w-3 h-3" />

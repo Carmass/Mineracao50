@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft, Star, ShoppingCart, Heart, ExternalLink,
-  TrendingUp, Sparkles, BarChart3, Share2
+  ArrowLeft, Star, Heart, ExternalLink,
+  TrendingUp, Sparkles, Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,7 @@ import Link from "next/link";
 import { formatCurrency, formatNumber, MARKETPLACE_CONFIG, getOpportunityLabel, getOpportunityColor } from "@/lib/utils";
 import { PriceHistoryChart } from "@/components/products/price-history-chart";
 import { toast } from "sonner";
+import { favoritesApi } from "@/lib/api";
 
 interface ProductDetailPageProps {
   id: string;
@@ -23,6 +24,28 @@ export function ProductDetailPage({ id }: ProductDetailPageProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [aiInsight, setAiInsight] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+
+  async function handleFavorite() {
+    if (favLoading) return;
+    setFavLoading(true);
+    try {
+      if (isFavorited) {
+        await favoritesApi.remove(id);
+        setIsFavorited(false);
+        toast.success("Removido dos favoritos");
+      } else {
+        await favoritesApi.add(id);
+        setIsFavorited(true);
+        toast.success("Salvo nos favoritos!");
+      }
+    } catch {
+      toast.error("Faça login para salvar favoritos");
+    } finally {
+      setFavLoading(false);
+    }
+  }
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
@@ -149,7 +172,7 @@ export function ProductDetailPage({ id }: ProductDetailPageProps) {
                 <Star className="w-4 h-4 text-yellow-400" />
                 <span className="font-bold text-white">{product.rating}</span>
               </div>
-              <p className="text-xs text-white/50">{formatNumber(product.reviews)} avaliações</p>
+              <p className="text-xs text-white/50">{product.reviews > 0 ? `${formatNumber(product.reviews)} avaliações` : "—"}</p>
             </div>
             <div className="glass-card p-3 text-center">
               <div className="font-bold text-white mb-1">{formatNumber(product.sales)}</div>
@@ -196,10 +219,29 @@ export function ProductDetailPage({ id }: ProductDetailPageProps) {
                 Ver no {mp.label}
               </Link>
             </Button>
-            <Button variant="outline" size="icon" className="border-white/20">
-              <Heart className="w-4 h-4" />
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-white/20"
+              onClick={handleFavorite}
+              disabled={favLoading}
+            >
+              <Heart className={isFavorited ? "w-4 h-4 fill-red-400 text-red-400" : "w-4 h-4"} />
             </Button>
-            <Button variant="outline" size="icon" className="border-white/20">
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-white/20"
+              onClick={async () => {
+                const url = window.location.href;
+                if (navigator.share) {
+                  await navigator.share({ title: product.title, url }).catch(() => null);
+                } else {
+                  await navigator.clipboard.writeText(url);
+                  toast.success("Link copiado!");
+                }
+              }}
+            >
               <Share2 className="w-4 h-4" />
             </Button>
           </div>
