@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { load } from "cheerio";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { spawn } from "child_process";
 import path from "path";
 
@@ -365,8 +365,8 @@ async function saveProducts(products: ScrapedProduct[], supabase: Awaited<Return
 
 export async function POST(req: Request) {
   try {
-    const authClient = await createServiceClient();
-    const { data: { user } } = await authClient.auth.getUser();
+    const sessionClient = await createClient();
+    const { data: { user } } = await sessionClient.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));
