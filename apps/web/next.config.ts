@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // Required for monorepo: traces root node_modules into the standalone bundle
     outputFileTracingRoot: path.join(process.cwd(), "../../"),
-  },
+  } as Record<string, unknown>,
   devIndicators: false,
   images: {
     remotePatterns: [

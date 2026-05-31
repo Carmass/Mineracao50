@@ -173,6 +173,7 @@ export interface Alert {
   channels: AlertChannel[];
   active: boolean;
   last_triggered_at?: string;
+  trigger_count?: number;
   created_at: string;
 }
 

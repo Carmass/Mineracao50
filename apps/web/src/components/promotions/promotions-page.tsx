@@ -17,7 +17,7 @@ const MOCK_PROMOTIONS: Promotion[] = [
   { id: "5", product_id: "5", type: "progressive_discount", discount: 40, original_price: 129.99, promo_price: 77.99, ends_at: new Date(Date.now() + 3600000 * 72).toISOString(), is_active: true, created_at: new Date().toISOString() },
 ];
 
-const PROMO_NAMES = { flash_sale: "Flash Sale", coupon: "Cupom", cashback: "Cashback", progressive_discount: "Desconto Progressivo", seasonal: "Sazonal" };
+const PROMO_NAMES: Record<string, string> = { flash_sale: "Flash Sale", coupon: "Cupom", cashback: "Cashback", progressive_discount: "Desconto Progressivo", seasonal: "Sazonal" };
 const PROMO_COLORS: Record<string, string> = { flash_sale: "text-red-400 bg-red-500/10", coupon: "text-blue-400 bg-blue-500/10", cashback: "text-green-400 bg-green-500/10", progressive_discount: "text-purple-400 bg-purple-500/10", seasonal: "text-yellow-400 bg-yellow-500/10" };
 
 function CountdownTimer({ endsAt }: { endsAt: string }) {

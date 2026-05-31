@@ -70,7 +70,7 @@ export function AlertCreateModal({ open, initialType, onClose }: AlertCreateModa
     if (marketplace) conditions.marketplace = marketplace;
     if (keywords) conditions.keywords = keywords.split(",").map(k => k.trim()).filter(Boolean);
 
-    mutation.mutate({ type, conditions, channels, active: true });
+    mutation.mutate({ type, conditions, channels: channels as import("@/types").AlertChannel[], active: true });
   };
 
   const toggleChannel = (ch: string) => {
